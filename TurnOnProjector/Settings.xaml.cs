@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Windows;
-
+using System.Xml;
 
 namespace TurnOnProjector
 {
@@ -19,49 +19,6 @@ namespace TurnOnProjector
         private void testProjector_Click(object sender, RoutedEventArgs e)
         {
 
-            try
-            {
-                prPing.Visibility = Visibility.Visible;
-                prIPAddress = System.Net.IPAddress.Parse((tbIP1.Text + "." + tbIP2.Text + "." + tbIP3.Text + "." + tbIP4.Text));
-                string name = "";
-                Thread myThread = new Thread((s) =>
-                {
-                    name = Projector.getName(prIPAddress);
-
-                });
-                myThread.IsBackground = true;
-                myThread.Start();
-
-                System.Windows.Controls.ProgressBar pr = prPing;
-                
-                (new Thread((s) =>
-                {
-                    Thread.Sleep(4000);
-                    if (myThread.IsAlive)
-                    {
-                        Dispatcher.BeginInvoke((Action)(() => pr.Visibility = Visibility.Hidden));
-                        MessageBox.Show("Неправильно указан IP адрес!");
-                        myThread.Abort();
-                    }
-                    else if (name != "")
-                    {
-                        Dispatcher.BeginInvoke((Action)(() => pr.Visibility = Visibility.Hidden));
-                        Dispatcher.BeginInvoke((Action)(() => btnSave.IsEnabled = true));
-                        Dispatcher.BeginInvoke((Action)(() => lblStatus.Content = "Подключено к " + name));
-                        MainWindow.projector = new Projector(prIPAddress);
-                    }
-                    else
-                    {
-                        Dispatcher.BeginInvoke((Action)(() => pr.Visibility = Visibility.Hidden));
-                        MessageBox.Show("Неправильно указан IP адрес!");
-                    }
-                })).Start();
-            }
-            catch (FormatException)
-            {
-                MessageBox.Show("Неправильно указан IP адрес!");
-            }
-
         }
 
         private void buttonExit_Click(object sender, RoutedEventArgs e)
@@ -71,18 +28,42 @@ namespace TurnOnProjector
 
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
-            using (System.IO.StreamWriter sw = System.IO.File.CreateText(MainWindow.FILE_SETTINGS))
+
+            try
             {
-                sw.WriteLine(prIPAddress);
-            }            
+                prIPAddress = System.Net.IPAddress.Parse((tbIP1.Text + "." + tbIP2.Text + "." + tbIP3.Text + "." + tbIP4.Text));
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Неправильно указан IP адрес!");
+                return;
+            }
+
+            try
+            {
+                string s = "<xml><pr>" + cbProjector.SelectedIndex.ToString() + "</pr><ippr>" + prIPAddress + "</ippr></xml>";
+                XmlDocument xdoc = new XmlDocument();
+                xdoc.LoadXml(s);
+                xdoc.Save(MainWindow.FILE_SETTINGS);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Ошибка записи в файл :(");
+            }
+       
         }
 
         private void tbIP_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            if (btnSave != null)
+          /*  if (btnSave != null)
             {
                 btnSave.IsEnabled = false;
-            }
+            }*/
+        }
+
+        private void comboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            btnSave.IsEnabled = true;         
         }
     }
 }

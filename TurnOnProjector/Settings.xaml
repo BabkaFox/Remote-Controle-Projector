@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TurnOnProjector"
         mc:Ignorable="d"
-        Title="Настройки" Height="142.101" Width="380.003" WindowStyle="None" AllowsTransparency="true" Visibility="Hidden" Icon="Resources/ProjectorICO.ico">
+        Title="Настройки" Height="142.101" Width="380.003" WindowStyle="None" AllowsTransparency="true" Visibility="Visible" Icon="Resources/ProjectorICO.ico">
     <Grid>
-        <Button x:Name="testProjector" Content="Проверить IP" HorizontalAlignment="Left" Margin="228,55,0,0" VerticalAlignment="Top" Width="142" Height="29" Click="testProjector_Click"/>
+        <Button x:Name="testProjector" Content="Проверить IP" HorizontalAlignment="Left" Margin="81,95,0,0" VerticalAlignment="Top" Width="142" Height="29" Click="testProjector_Click" Visibility="Hidden"/>
         <TextBox x:Name="tbIP1" HorizontalAlignment="Left" Height="29" Margin="9,55,0,0" TextWrapping="Wrap" Text="192" VerticalAlignment="Top" Width="40" FontSize="18" MaxLines="1" MaxLength="3" TextChanged="tbIP_TextChanged"/>
         <TextBox x:Name="tbIP2" HorizontalAlignment="Left" Height="29" Margin="55,55,0,0" TextWrapping="Wrap" Text="168" VerticalAlignment="Top" Width="40" FontSize="18" MaxLines="1" MaxLength="3" TextChanged="tbIP_TextChanged"/>
         <TextBox x:Name="tbIP3" HorizontalAlignment="Left" Height="29" Margin="101,55,0,0" TextWrapping="Wrap" Text="99" VerticalAlignment="Top" Width="40" FontSize="18" MaxLines="1" MaxLength="3" TextChanged="tbIP_TextChanged"/>
@@ -15,11 +15,16 @@
         <Label x:Name="label" Content="." HorizontalAlignment="Left" Height="27" Margin="44,57,0,0" VerticalAlignment="Top" Width="16" FontSize="14" FontWeight="Bold"/>
         <Label x:Name="label_Copy" Content="." HorizontalAlignment="Left" Height="27" Margin="90,57,0,0" VerticalAlignment="Top" Width="16" FontSize="14" FontWeight="Bold"/>
         <Label x:Name="label_Copy1" Content="." HorizontalAlignment="Left" Height="27" Margin="136,57,0,0" VerticalAlignment="Top" Width="16" FontSize="14" FontWeight="Bold"/>
-        <Label x:Name="label1" Content="Введите IP-адрес проектора" HorizontalAlignment="Left" Height="27" Margin="5,28,0,0" VerticalAlignment="Top" Width="168"/>
-        <Button x:Name="btnSave" Content="Сохранить" HorizontalAlignment="Left" Height="29" Margin="228,95,0,0" VerticalAlignment="Top" Width="142" IsEnabled="False" Click="buttonSave_Click"/>
-        <Label x:Name="lblStatus" Content="Статус" HorizontalAlignment="Left" Height="29" Margin="6,95,0,0" VerticalAlignment="Top" Width="217"/>
+        <Label x:Name="label1" Content="IP-адрес проектора" HorizontalAlignment="Left" Height="27" Margin="5,31,0,0" VerticalAlignment="Top" Width="168"/>
+        <Button x:Name="btnSave" Content="Сохранить" HorizontalAlignment="Left" Height="29" Margin="228,103,0,0" VerticalAlignment="Top" Width="142" IsEnabled="False" Click="buttonSave_Click"/>
+        <Label x:Name="lblStatus" Content="Статус" HorizontalAlignment="Left" Height="29" Margin="6,95,0,0" VerticalAlignment="Top" Width="217" Visibility="Hidden"/>
         <Button x:Name="buttonExit" Content="❌" HorizontalAlignment="Left" Margin="339,9,0,0" VerticalAlignment="Top" Width="31" Height="28" Click="buttonExit_Click" FontSize="14" FontWeight="Bold"/>
         <ProgressBar x:Name="prPing" HorizontalAlignment="Left" Height="29" Margin="228,55,0,0" VerticalAlignment="Top" Width="142" IsIndeterminate="True" Visibility="Hidden"/>
-        <Border BorderBrush="Black" BorderThickness="3" HorizontalAlignment="Left" Height="142" VerticalAlignment="Top" Width="380"/>
+        <ComboBox x:Name="cbProjector" HorizontalAlignment="Left" Margin="9,103,0,0" VerticalAlignment="Top" Width="178" Height="29" SelectionChanged="comboBox_SelectionChanged">
+            <ComboBoxItem Content="Epson X27"/>
+            <ComboBoxItem Content="Benq"/>
+        </ComboBox>
+        <Label x:Name="label1_Copy" Content="Модель проектора" HorizontalAlignment="Left" Height="27" Margin="5,80,0,0" VerticalAlignment="Top" Width="168"/>
+        <!-- <Border BorderBrush="Black" BorderThickness="3" HorizontalAlignment="Left" Height="142" VerticalAlignment="Top" Width="380"/> -->
     </Grid>
 </Window>

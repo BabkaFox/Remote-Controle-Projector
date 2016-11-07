@@ -5,6 +5,7 @@ using System.Windows;
 
 using System.Windows.Forms; // NotifyIcon control
 using System.Drawing; // Icon
+using System.Xml;
 
 namespace TurnOnProjector
 {
@@ -15,7 +16,7 @@ namespace TurnOnProjector
     {
 
         public static Projector projector;
-        public const string FILE_SETTINGS = @"C:\ProgramData\IP_PROJECTOR.txt";
+        public const string FILE_SETTINGS = @"C:\ProgramData\IP_PROJECTOR.xml";
         Settings settings_windows = new Settings(); // Окно настроек
         NotifyIcon notifyIcon = new NotifyIcon();  //Для трея
         private ContextMenu contextMenu1 = new ContextMenu(); //Для трея
@@ -24,7 +25,7 @@ namespace TurnOnProjector
         public MainWindow()
         {
             InitializeComponent();
-            var desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
+            var desktopWorkingArea = SystemParameters.WorkArea;
             this.Left = desktopWorkingArea.Right - this.Width;
             this.Top = desktopWorkingArea.Bottom - this.Height;
             prgProjector.Visibility = Visibility.Visible;
@@ -33,11 +34,10 @@ namespace TurnOnProjector
             notifyIcon.Text = "Управление проектором";
             notifyIcon.Icon = Properties.Resources.ProjectorICO;
             notifyIcon.Visible = true;
-            //notifyIcon.ShowBalloonTip(200);
             miExit = new MenuItem("Выход", this.MenuExit);
             contextMenu1.MenuItems.AddRange(new MenuItem[] { this.miExit });
             notifyIcon.ContextMenu = this.contextMenu1;
-            notifyIcon.Click += new System.EventHandler(this.notifyIcon1_DoubleClick);
+            notifyIcon.Click += new EventHandler(this.notifyIcon1_DoubleClick);
 
             reload();
         }
@@ -48,13 +48,11 @@ namespace TurnOnProjector
             this.Visibility = Visibility.Hidden;
             notifyIcon.ShowBalloonTip(100);
         }
-
         private void MenuExit(object Sender, EventArgs e)
         {
             settings_windows.Close();
             this.Close();
         }
-
         private void notifyIcon1_DoubleClick(object Sender, EventArgs e)
         {
             if (this.Visibility == Visibility.Hidden)
@@ -160,11 +158,41 @@ namespace TurnOnProjector
             try
             {
                 String statusPr = "";
-                string[] lines = System.IO.File.ReadAllLines(FILE_SETTINGS);
+                //string[] lines = System.IO.File.ReadAllLines(FILE_SETTINGS);
+                string prType="", prIP="";
+
+                //XmlReader xmlReader = XmlReader.Create("http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml");
+                XmlReader xmlReader = XmlReader.Create(FILE_SETTINGS);
+
+                using (XmlReader reader = XmlReader.Create(FILE_SETTINGS))
+                {
+                    while (reader.Read())
+                    {
+                        switch (reader.Name.ToString())
+                        {
+                            case "pr":
+                                prType = reader.ReadString();
+                                break;
+                            case "ippr":
+                                prIP = reader.ReadString();
+                                break;
+                        }
+
+                    }
+                }
+
+                if (prType == "0")
+                    projector = new EpsonProjector();
+                else if (prType == "1")
+                    projector = new BenqProjector();
+                else
+                    throw new Exception();
+
                 try
                 {
-                    projector = new Projector(System.Net.IPAddress.Parse(lines[0]));
-                    //Console.WriteLine("Статус: " + projector.IP);
+                    projector.IP = System.Net.IPAddress.Parse(prIP);
+                    
+                    Console.WriteLine("Статус: " + projector.IP);
 
                     Thread myThread = new Thread((s) =>
                     {
@@ -206,7 +234,7 @@ namespace TurnOnProjector
                     })).Start();
 
                 }
-                catch (System.IndexOutOfRangeException)
+                catch (IndexOutOfRangeException)
                 {
                     System.Windows.MessageBox.Show("Ошибка чтения файла. Пустой файл");
                     lblError.Visibility = Visibility.Visible;
