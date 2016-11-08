@@ -158,11 +158,7 @@ namespace TurnOnProjector
             try
             {
                 String statusPr = "";
-                //string[] lines = System.IO.File.ReadAllLines(FILE_SETTINGS);
                 string prType="", prIP="";
-
-                //XmlReader xmlReader = XmlReader.Create("http://www.ecb.int/stats/eurofxref/eurofxref-daily.xml");
-                XmlReader xmlReader = XmlReader.Create(FILE_SETTINGS);
 
                 using (XmlReader reader = XmlReader.Create(FILE_SETTINGS))
                 {
@@ -192,13 +188,9 @@ namespace TurnOnProjector
                 {
                     projector.IP = System.Net.IPAddress.Parse(prIP);
                     
-                    Console.WriteLine("Статус: " + projector.IP);
+                    //Console.WriteLine("Статус: " + projector.IP);
 
-                    Thread myThread = new Thread((s) =>
-                    {
-                        statusPr = projector.getStatus();
-                    });
-                    myThread.IsBackground = true;
+                    Thread myThread = new Thread((s) => { statusPr = projector.getStatus(); }) {IsBackground = true};
                     myThread.Start(); //запускаем поток
                     System.Windows.Controls.ProgressBar pr = prgProjector;
 
