@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace TurnOnProjector
 {
@@ -55,52 +56,68 @@ namespace TurnOnProjector
             return name;
 
         }
-        
-        public override string getStatus()
+
+        public override async Task<string> getStatus()
         {
-            String status = sendMessage("PWSTATUS?");
+            string status = await sendMessage("PWSTATUS?");
             return status;
         }
-        
-        public override void turnOn()
+
+        public override async Task<string> turnOn()
         {
-            sendMessage("PWR ON");
+            return await sendMessage("PWR ON");
         }
 
-        public override void freeze()
+        public override async void freeze()
         {
-            String status = sendMessage("FREEZE?");
+            String status = await sendMessage("FREEZE?");
             Console.WriteLine(status);
             if (status.StartsWith("FREEZE=ON"))
-                sendMessage("FREEZE OFF");
+                await sendMessage("FREEZE OFF");
             else
-                sendMessage("FREEZE ON");
+                await sendMessage("FREEZE ON");
 
         }
 
-        public override void turnOff()
+        public override async Task<string> turnOff()
         {
-            sendMessage("PWR OFF");
+            return await sendMessage("PWR OFF");
         }
 
-        public override String sendMessage(String message)
+        public override async Task<string> sendMessage(string message)
         {
             try
             {
                 TcpClient socket = new TcpClient(IP.ToString(), 3629);
                 NetworkStream client = socket.GetStream();
                 byte[] startMessage = { 0x45, 0x53, 0x43, 0x2f, 0x56, 0x50, 0x2e, 0x6e, 0x65, 0x74, 0x10, 0x03, 0x00, 0x00, 0x00, 0x00 };
-                client.Write(startMessage, 0, startMessage.Length);
-                byte[] data = new byte[256];
-                Int32 bytes = client.Read(data, 0, data.Length);
-                String responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                await client.WriteAsync(startMessage, 0, startMessage.Length);
+
+                var by = new byte[2048];
+
+                int bytesAvailable = await client.ReadAsync(by, 0, 2048);
+                var responseData = System.Text.Encoding.ASCII.GetString(by, 0, bytesAvailable);
+
+                //Console.WriteLine("Epson first answ "+responseData);
+
                 byte[] userMessage = new byte[message.Length + 1];
                 Buffer.BlockCopy(System.Text.Encoding.ASCII.GetBytes(message), 0, userMessage, 0, message.Length);
                 userMessage[userMessage.Length - 1] = 0x0d;
-                client.Write(userMessage, 0, userMessage.Length);
-                data = new byte[256];
-                bytes = client.Read(data, 0, data.Length);
-                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+
+                await client.WriteAsync(userMessage, 0, userMessage.Length);
+                client.Flush();
+
+                by = new byte[2048];
+
+                bytesAvailable = await client.ReadAsync(by, 0, 2048);
+                responseData = System.Text.Encoding.ASCII.GetString(by, 0, bytesAvailable);
+
+                //Console.WriteLine("Epson second answ " + responseData);
+
+
+                socket.GetStream().Close();
+                socket.Close();
+
                 return responseData;
             }
             catch (Exception)

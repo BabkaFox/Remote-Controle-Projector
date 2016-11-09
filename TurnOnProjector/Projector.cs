@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-
+using System.Threading.Tasks;
 
 namespace TurnOnProjector
 {
@@ -15,15 +15,15 @@ namespace TurnOnProjector
             set { _ip = value; }
         }
 
-        public abstract void turnOn();
+        public abstract Task<string> turnOn();
 
-        public abstract void turnOff();
+        public abstract Task<string> turnOff();
 
-        public abstract string getStatus();
+        public abstract Task<string> getStatus();
 
         public abstract void freeze();
 
-        public abstract String sendMessage(String message);
+        public abstract Task<string> sendMessage(string message);
     }
 
 }

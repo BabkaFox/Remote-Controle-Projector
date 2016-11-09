@@ -9,52 +9,63 @@ namespace TurnOnProjector
 {
     class BenqProjector : Projector
     {
-        public override void freeze()
+        public override async void freeze()
         {
-            throw new NotImplementedException();
+            Console.WriteLine(await sendMessage("%1FREZ ?"));
+            await sendMessage("%1FREZ ?");
         }
 
-        public override string getStatus()
+        public override async Task<string> getStatus()
         {
-            throw new NotImplementedException();
+            var stat = await sendMessage("%1POWR ?");
+            Console.WriteLine("Функция getStatus: "+ stat);
+            return stat;
         }
 
-        public override string sendMessage(string message)
+        public override async Task<string> sendMessage(string message)
         {
             try
             {
-
                 TcpClient socket = new TcpClient(IP.ToString(), 4352);
                 NetworkStream client = socket.GetStream();
-                
+
+                var by = new byte[2048];
+
+                int bytesAvailable = await client.ReadAsync(by, 0, 2048);
+                var msg = Encoding.ASCII.GetString(by, 0, bytesAvailable);
 
                 byte[] userMessage = new byte[message.Length + 1];
                 Buffer.BlockCopy(Encoding.ASCII.GetBytes(message), 0, userMessage, 0, message.Length);
                 userMessage[userMessage.Length - 1] = 0x0d;
 
-                client.Write(userMessage, 0, userMessage.Length);
-                byte[] data = new byte[256];
-                Int32 bytes = client.Read(data, 0, data.Length);
-                bytes = client.Read(data, 0, data.Length);
-                String responseData = Encoding.ASCII.GetString(data, 0, bytes);
-                Console.WriteLine("Response: " + responseData);
+                await client.WriteAsync(userMessage, 0, userMessage.Length);
+                client.Flush();
 
-                return responseData;
+                by = new byte[2048];
+
+                bytesAvailable = await client.ReadAsync(by, 0, 2048);
+                msg = Encoding.ASCII.GetString(by, 0, bytesAvailable);
+
+                socket.GetStream().Close();
+                socket.Close();
+
+                return msg;
+
             }
             catch (Exception)
             {
-                return "";
+                return "ERRORORO";
             }
         }
 
-        public override void turnOff()
+        public override async Task<string> turnOff()
         {
-            sendMessage("%1POWR=0");
+            return await sendMessage("%1POWR 0");
         }
 
-        public override void turnOn()
+        public override async Task<string> turnOn()
         {
-            sendMessage("%1POWR=1");
+            return await sendMessage("%1POWR 1");
         }
     }
 }

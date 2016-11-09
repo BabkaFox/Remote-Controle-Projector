@@ -14,6 +14,61 @@ namespace TurnOnProjector
         public Settings()
         {
             InitializeComponent();
+
+            try //Открыть файл, получить данные о проекторе
+            {
+                string prType = "", prIP = "";
+
+                using (XmlReader reader = XmlReader.Create(MainWindow.FILE_SETTINGS))
+                {
+                    while (reader.Read())
+                    {
+                        switch (reader.Name.ToString())
+                        {
+                            case "pr":
+                                prType = reader.ReadString();
+                                break;
+                            case "ippr":
+                                prIP = reader.ReadString();
+                                break;
+                        }
+
+                    }
+                }
+
+                switch (prType)
+                {
+                    case "0":
+                        cbProjector.SelectedIndex = 0;
+                        tbIP1.Text = prIP.Split("."[0])[0];
+                        tbIP2.Text = prIP.Split("."[0])[1];
+                        tbIP3.Text = prIP.Split("."[0])[2];
+                        tbIP4.Text = prIP.Split("."[0])[3];
+                        break;
+                    case "1":
+                        cbProjector.SelectedIndex = 1;
+                        tbIP1.Text = prIP.Split("."[0])[0];
+                        tbIP2.Text = prIP.Split("."[0])[1];
+                        tbIP3.Text = prIP.Split("."[0])[2];
+                        tbIP4.Text = prIP.Split("."[0])[3];
+                        break;
+                    default:
+                        //System.Windows.MessageBox.Show("Ошибка чтения файла. В файле кривые настройки");
+                        break;
+                }
+
+            }
+            catch (XmlException)
+            {
+                Console.WriteLine("В настройках беда");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("В настройках беда. Нет файла");
+
+            }
+
+
         }
 
         private void testProjector_Click(object sender, RoutedEventArgs e)
