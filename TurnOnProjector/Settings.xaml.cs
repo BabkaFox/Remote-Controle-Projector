@@ -41,17 +41,11 @@ namespace TurnOnProjector
                 {
                     case "0":
                         cbProjector.SelectedIndex = 0;
-                        tbIP1.Text = prIP.Split("."[0])[0];
-                        tbIP2.Text = prIP.Split("."[0])[1];
-                        tbIP3.Text = prIP.Split("."[0])[2];
-                        tbIP4.Text = prIP.Split("."[0])[3];
+                        tbIP1.Text = prIP;
                         break;
                     case "1":
                         cbProjector.SelectedIndex = 1;
-                        tbIP1.Text = prIP.Split("."[0])[0];
-                        tbIP2.Text = prIP.Split("."[0])[1];
-                        tbIP3.Text = prIP.Split("."[0])[2];
-                        tbIP4.Text = prIP.Split("."[0])[3];
+                        tbIP1.Text = prIP;
                         break;
                     default:
                         //System.Windows.MessageBox.Show("Ошибка чтения файла. В файле кривые настройки");
@@ -87,7 +81,7 @@ namespace TurnOnProjector
 
             try
             {
-                prIPAddress = System.Net.IPAddress.Parse((tbIP1.Text + "." + tbIP2.Text + "." + tbIP3.Text + "." + tbIP4.Text));
+                prIPAddress = System.Net.IPAddress.Parse(tbIP1.Text);
             }
             catch (FormatException)
             {
