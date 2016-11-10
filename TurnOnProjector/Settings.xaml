@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TurnOnProjector"
         mc:Ignorable="d"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
         Title="Настройки" Height="142.101" Width="380.003" WindowStyle="None" AllowsTransparency="true" Visibility="Hidden" Icon="Resources/ProjectorICO.ico">
     <Grid>
         <Button x:Name="testProjector" Content="Проверить IP" HorizontalAlignment="Left" Margin="81,95,0,0" VerticalAlignment="Top" Width="142" Height="29" Click="testProjector_Click" Visibility="Hidden"/>
@@ -25,6 +26,6 @@
             <ComboBoxItem Content="Benq"/>
         </ComboBox>
         <Label x:Name="label1_Copy" Content="Модель проектора" HorizontalAlignment="Left" Height="27" Margin="5,80,0,0" VerticalAlignment="Top" Width="168"/>
-        <!-- <Border BorderBrush="Black" BorderThickness="3" HorizontalAlignment="Left" Height="142" VerticalAlignment="Top" Width="380"/> -->
+        <Border BorderBrush="Black" BorderThickness="3" HorizontalAlignment="Left" Height="142" VerticalAlignment="Top" Width="380"/>
     </Grid>
 </Window>

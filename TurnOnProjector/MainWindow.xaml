@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TurnOnProjector"
         mc:Ignorable="d"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
         Title="Проектор" Height="252.285" Width="191.954" Topmost="True" WindowStyle="None" AllowsTransparency="true" Icon="Resources/ProjectorICO.ico" >
     <Grid>
         <Button x:Name="buttonExit" HorizontalAlignment="Left" Margin="151,10,0,0" VerticalAlignment="Top" Width="31" Height="28" Click="buttonExit_Click" FontSize="14" FontWeight="Bold">

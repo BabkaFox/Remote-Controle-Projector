@@ -4,7 +4,9 @@ using System.Threading;
 using System.Windows;
 
 using System.Windows.Forms; // NotifyIcon control
-using System.Drawing; // Icon
+using System.Drawing;
+using System.Windows.Input;
+// Icon
 using System.Xml;
 
 namespace TurnOnProjector
@@ -31,8 +33,8 @@ namespace TurnOnProjector
             prgProjector.Visibility = Visibility.Visible;
 
             notifyIcon.BalloonTipText = "Управление проектором";
-            notifyIcon.Text = "Управление проектором";
-            notifyIcon.Icon = Properties.Resources.ProjectorICO;
+            notifyIcon.Text = "Подключаюсь к проектору";
+            notifyIcon.Icon = Properties.Resources.ProjectorICOload;
             notifyIcon.Visible = true;
             miExit = new MenuItem("Выход", this.MenuExit);
             contextMenu1.MenuItems.AddRange(new MenuItem[] {this.miExit});
@@ -78,16 +80,16 @@ namespace TurnOnProjector
                         LoadProjectors();
                         break;
                     default:
-                        System.Windows.MessageBox.Show("Ошибка чтения файла. В файле кривые настройки");
+                        System.Windows.MessageBox.Show("Указаны неправильные настройки");
                         break;
                 }
 
             }
             catch (XmlException)
             {
-                System.Windows.MessageBox.Show("Ошибка чтения файла. Пустой файл настроек");
+                System.Windows.MessageBox.Show("Поврежден файл настроек");
                 System.IO.File.CreateText(FILE_SETTINGS);
-                this.lblError.Visibility = Visibility.Visible;
+                lblError.Visibility = Visibility.Visible;
                 prgProjector.Visibility = Visibility.Hidden;
                 buttonOn.IsEnabled = false;
                 buttonReload.Visibility = Visibility.Visible;
@@ -95,7 +97,7 @@ namespace TurnOnProjector
             catch (Exception)
             {
                 Console.WriteLine("MEGAEROROR");
-                System.Windows.MessageBox.Show("Ошибка чтения файла. Невозможно открыть/создать файл");
+                System.Windows.MessageBox.Show("Ошибка чтения файла");
                 System.IO.File.CreateText(FILE_SETTINGS);
                 lblError.Visibility = Visibility.Visible;
                 prgProjector.Visibility = Visibility.Hidden;
@@ -137,10 +139,7 @@ namespace TurnOnProjector
         private async void buttonExtend_Click(object sender, RoutedEventArgs e)
         {
             //Режим расширения экранов
-
-            Console.WriteLine("Новый статус проектора: " + await projector.getStatus());
-
-            //Process.Start("DisplaySwitch.exe", "/extend");
+           Process.Start("DisplaySwitch.exe", "/extend");
         }
 
         //Кнопка включения
@@ -262,10 +261,18 @@ namespace TurnOnProjector
                     await Dispatcher.BeginInvoke((Action)(() => buttonReload.Visibility = Visibility.Hidden));
                     await Dispatcher.BeginInvoke((Action)(() => lblError.Visibility = Visibility.Hidden));
                     break;
+                case "ERRORORO": //Не достучались
+                    await Dispatcher.BeginInvoke((Action)(() => prgProjector.Visibility = Visibility.Hidden));
+                    await Dispatcher.BeginInvoke((Action)(() => buttonOn.IsEnabled = false));
+                    await Dispatcher.BeginInvoke((Action)(() => lblError.Visibility = Visibility.Visible));
+                    await Dispatcher.BeginInvoke((Action)(() => buttonReload.Visibility = Visibility.Visible));
+                    break;
             }
+            await Dispatcher.BeginInvoke((Action)(() => notifyIcon.Icon = Properties.Resources.ProjectorICO));
+            await Dispatcher.BeginInvoke((Action)(() => notifyIcon.Text = "Управление проектором"));
 
         }
-     
+
         private async void buttonFreeze_Click(object sender, RoutedEventArgs e)
         {
 
@@ -274,6 +281,11 @@ namespace TurnOnProjector
                 projector.freeze();
             })).Start();
 
+        }
+
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }
 

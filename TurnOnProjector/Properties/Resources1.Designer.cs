@@ -69,5 +69,16 @@ namespace TurnOnProjector.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
+        /// </summary>
+        public static System.Drawing.Icon ProjectorICOload {
+            get {
+                object obj = ResourceManager.GetObject("ProjectorICOload", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }
+/**/
