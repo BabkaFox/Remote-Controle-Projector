@@ -88,7 +88,6 @@ namespace TurnOnProjector
             catch (XmlException)
             {
                 System.Windows.MessageBox.Show("Поврежден файл настроек");
-                System.IO.File.CreateText(FILE_SETTINGS);
                 lblError.Visibility = Visibility.Visible;
                 prgProjector.Visibility = Visibility.Hidden;
                 buttonOn.IsEnabled = false;
